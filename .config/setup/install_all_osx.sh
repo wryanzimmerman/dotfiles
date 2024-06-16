@@ -8,9 +8,11 @@ fi
 
 brew install neovim
 brew install tmux
+brew install antidote
 brew install mosh
 brew install lazygit
 brew install gh
+brew install fzf
 
 brew install --cask iterm2
 brew install --cask 1password
