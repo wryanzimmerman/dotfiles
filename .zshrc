@@ -8,16 +8,14 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
-
-antidote load
-
-source <(fzf --zsh)
-
 # Dotfiles repo alias
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias lazydot="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias setup_install="$HOME/.config/setup/install_all_osx.sh"
-
 alias v='nvim'
 alias ll='ls -al'
+
+zvm_after_init_commands+=('source <(fzf --zsh)')
+
+source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+antidote load
