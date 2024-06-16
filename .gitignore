@@ -5,6 +5,9 @@
 .LSOverride
 .Trash
 
+# Ignore dotfiles git repo
+.dotfiles
+
 # OSX Directories
 Desktop/
 Downloads/
@@ -14,3 +17,7 @@ Movies/
 Music/
 Pictures/
 Public
+
+# Other
+.zsh_history
+.zsh_sessions
