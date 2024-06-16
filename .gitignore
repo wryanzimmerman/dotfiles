@@ -1,0 +1,16 @@
+# OSX General
+.DS_Store
+.CFUserTextEncoding
+.AppleDouble
+.LSOverride
+.Trash
+
+# OSX Directories
+Desktop/
+Downloads/
+Documents/
+Library/
+Movies/
+Music/
+Pictures/
+Public
