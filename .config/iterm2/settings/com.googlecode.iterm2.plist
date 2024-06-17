@@ -16,8 +16,12 @@
 	<string>manual</string>
 	<key>Default Bookmark Guid</key>
 	<string>402E50C5-952A-48B1-99DE-04ABD4A54935</string>
+	<key>EnableDivisionView</key>
+	<false/>
 	<key>HapticFeedbackForEsc</key>
 	<false/>
+	<key>HideScrollbar</key>
+	<true/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
 	<key>New Bookmarks</key>
@@ -2946,9 +2950,13 @@
 	<integer>0</integer>
 	<key>TabStyleWithAutomaticOption</key>
 	<integer>5</integer>
+	<key>UseBorder</key>
+	<false/>
 	<key>UseLionStyleFullscreen</key>
 	<false/>
 	<key>VisualIndicatorForEsc</key>
+	<false/>
+	<key>WindowNumber</key>
 	<false/>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>1</integer>
