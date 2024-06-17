@@ -7,17 +7,3 @@
 
 # Ignore dotfiles git repo
 .dotfiles
-
-# OSX Directories
-Desktop/
-Downloads/
-Documents/
-Library/
-Movies/
-Music/
-Pictures/
-Public
-
-# Other
-.zsh_history
-.zsh_sessions

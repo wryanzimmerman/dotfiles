@@ -20,6 +20,7 @@ alias ll='ls -al'
 # Prevent zsh-vi-mode from overriding fzf ctrl-r:
 zvm_after_init_commands+=('source <(fzf --zsh)')
 
+# Source zsh plugins
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 source $(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
