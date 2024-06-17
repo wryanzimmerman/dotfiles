@@ -8,11 +8,15 @@ fi
 
 brew install neovim
 brew install tmux
-brew install antidote
 brew install mosh
+brew install fzf
 brew install lazygit
 brew install gh
-brew install fzf
+
+brew install zsh-vi-mode
+brew install zsh-autosuggestions
+brew install powerlevel10k
+brew install zsh-fast-syntax-highlighting
 
 brew install --cask iterm2
 brew install --cask 1password

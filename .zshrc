@@ -12,10 +12,15 @@ fi
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias lazydot="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias setup_install="$HOME/.config/setup/install_all_osx.sh"
+
+# General aliases
 alias v='nvim'
 alias ll='ls -al'
 
+# Prevent zsh-vi-mode from overriding fzf ctrl-r:
 zvm_after_init_commands+=('source <(fzf --zsh)')
 
-source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
-antidote load
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
+source $(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source $(brew --prefix)/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
