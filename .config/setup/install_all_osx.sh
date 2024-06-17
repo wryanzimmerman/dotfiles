@@ -26,4 +26,6 @@ brew install --cask google-chrome
 brew install --cask firefox@developer-edition
 brew install --cask signal
 
+brew install --cask font-jetbrains-mono-nerd-font
+
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
