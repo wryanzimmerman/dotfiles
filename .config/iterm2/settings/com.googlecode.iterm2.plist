@@ -1469,15 +1469,15 @@
 			<key>Ansi 0 Color (Dark)</key>
 			<dict>
 				<key>Alpha Component</key>
-				<integer>1</integer>
+				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.20000000000000001</real>
+				<real>0.16470588235294117</real>
 				<key>Color Space</key>
 				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.16078431372549021</real>
+				<real>0.13333333333333333</real>
 				<key>Red Component</key>
-				<real>0.14117647058823529</real>
+				<real>0.11764705882352941</real>
 			</dict>
 			<key>Ansi 0 Color (Light)</key>
 			<dict>
@@ -2095,15 +2095,15 @@
 			<key>Background Color (Dark)</key>
 			<dict>
 				<key>Alpha Component</key>
-				<integer>1</integer>
+				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.20000000000000001</real>
+				<real>0.16437861323356628</real>
 				<key>Color Space</key>
 				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.16078431372549021</real>
+				<real>0.13394340872764587</real>
 				<key>Red Component</key>
-				<real>0.14117647058823529</real>
+				<real>0.12112968415021896</real>
 			</dict>
 			<key>Background Color (Light)</key>
 			<dict>
@@ -2949,6 +2949,10 @@
 	<key>UseLionStyleFullscreen</key>
 	<false/>
 	<key>VisualIndicatorForEsc</key>
+	<false/>
+	<key>kCPKSelectionViewPreferredModeKey</key>
+	<integer>1</integer>
+	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
 	<false/>
 </dict>
 </plist>
