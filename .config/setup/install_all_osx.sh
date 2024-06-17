@@ -26,4 +26,4 @@ brew install --cask google-chrome
 brew install --cask firefox@developer-edition
 brew install --cask signal
 
-
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
