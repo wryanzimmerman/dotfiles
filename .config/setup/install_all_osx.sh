@@ -6,6 +6,9 @@ then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+# https://docs.brew.sh/Shell-Completion
+chmod -R go-w "$(brew --prefix)/share"
+
 brew install neovim
 brew install tmux
 brew install mosh
@@ -13,6 +16,10 @@ brew install fzf
 brew install lazygit
 brew install gh
 brew install btop
+brew install cmake
+brew install nvm
+
+nvm install 20
 
 brew install zsh-vi-mode
 brew install zsh-autosuggestions
