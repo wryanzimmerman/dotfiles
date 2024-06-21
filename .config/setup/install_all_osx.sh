@@ -18,6 +18,7 @@ brew install gh
 brew install btop
 brew install cmake
 brew install nvm
+brew install fsouza/prettierd/prettierd
 
 nvm install 20
 
