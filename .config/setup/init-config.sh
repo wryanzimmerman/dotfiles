@@ -1,6 +1,6 @@
 #!/user/bin/env bash
 
-git clone --bare git@github.com:mrjones2014/dotfiles.git $HOME/.dotfiles
+git clone --bare git@github.com:wryanzimmerman/dotfiles.git $HOME/.dotfiles
 
 # define dotfiles alias locally since the dotfiles
 # aren't installed on the system yet
