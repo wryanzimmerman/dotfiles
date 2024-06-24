@@ -8,26 +8,34 @@ config.audible_bell = "Disabled"
 -- Color scheme
 --
 
-local custom_theme = wezterm.color.get_builtin_schemes()['Nord (Gogh)']
--- local custom_theme = wezterm.color.get_builtin_schemes()['Neutron']
--- local custom_theme = wezterm.color.get_builtin_schemes()['Oceanic-Next']
--- local custom_theme = wezterm.color.get_builtin_schemes()['One Half Black (Gogh)']
+local mode = "dark"
+local custom_theme = {}
 
--- custom_theme.background = '#1C1E22'
--- custom_theme.ansi[1] = '#1C1E22'
+if mode == "dark" then
+  custom_theme = wezterm.color.get_builtin_schemes()['Nord (Gogh)']
+  custom_theme.background = '#1E222B'
+  custom_theme.ansi[1] = '#1E222B'
+  config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Regular' })
+end
 
-custom_theme.background = '#1E222B'
-custom_theme.ansi[1] = '#1E222B'
+if mode == "oled" then
+  custom_theme = wezterm.color.get_builtin_schemes()['Nord (Gogh)']
+  custom_theme.background = '#000000'
+  custom_theme.ansi[1] = '#000000'
+end
 
--- custom_theme.background = '#000000'
--- custom_theme.ansi[1] = '#000000'
-
-custom_theme.foreground = '#CAC5BF'
+if mode == "light" then
+  custom_theme = wezterm.color.get_builtin_schemes()['nord-light']
+  custom_theme.background = '#F6F2EE'
+  custom_theme.ansi[1] = '#F6F2EE'
+  config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Medium' })
+end
 
 config.color_schemes = {
   Nord = custom_theme,
 }
 config.color_scheme = 'Nord'
+
 
 
 --
@@ -49,8 +57,8 @@ config.window_frame = {
   inactive_titlebar_bg = '#1E222B'
 }
 
--- config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
-config.window_decorations = "RESIZE"
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+-- config.window_decorations = "RESIZE"
 
 config.keys = {
   {
@@ -120,8 +128,8 @@ local function recompute_padding(window)
     overrides.window_padding = {
       left = '25px',
       right = '18px',
-      -- top = '60px',
-      top = '25px',
+      top = '60px',
+      -- top = '25px',
       bottom = '25px',
     }
   else
