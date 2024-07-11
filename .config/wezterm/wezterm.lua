@@ -15,7 +15,7 @@ if mode == "dark" then
   custom_theme = wezterm.color.get_builtin_schemes()['Nord (Gogh)']
   custom_theme.background = '#1E222B'
   custom_theme.ansi[1] = '#1E222B'
-  config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Regular' })
+  -- config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Regular' })
 end
 
 if mode == "oled" then
@@ -58,7 +58,6 @@ config.window_frame = {
 }
 
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
--- config.window_decorations = "RESIZE"
 
 config.keys = {
   {

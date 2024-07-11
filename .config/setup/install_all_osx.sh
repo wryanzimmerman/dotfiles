@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Install homebrew if not already installed
-if ! type brew
-then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
+# # Install homebrew if not already installed
+# if ! type brew
+# then
+#     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# fi
+#
 # https://docs.brew.sh/Shell-Completion
 chmod -R go-w "$(brew --prefix)/share"
 
@@ -32,14 +32,14 @@ brew install zsh-autosuggestions
 brew install powerlevel10k
 brew install zsh-fast-syntax-highlighting
 
-brew install --cask iterm2
-brew install --cask 1password
-brew install --cask 1password-cli
-brew install --cask expressvpn
-brew install --cask google-chrome
-brew install --cask firefox@developer-edition
-brew install --cask signal
-
+# brew install --cask iterm2
+# brew install --cask 1password
+# brew install --cask 1password-cli
+# brew install --cask expressvpn
+# brew install --cask google-chrome
+# brew install --cask firefox@developer-edition
+# brew install --cask signal
+#
 brew install --cask font-jetbrains-mono-nerd-font
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
