@@ -8,7 +8,7 @@ config.audible_bell = "Disabled"
 -- Color scheme
 --
 
-local mode = "dark"
+local mode = "oled"
 local custom_theme = {}
 
 if mode == "dark" then
