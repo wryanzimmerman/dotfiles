@@ -19,6 +19,11 @@ brew install btop
 brew install cmake
 brew install nvm
 brew install fsouza/prettierd/prettierd
+brew install ripgrep
+brew install gcc
+brew install fd
+brew install luarocks
+brew install awscli
 
 nvm install 20
 
