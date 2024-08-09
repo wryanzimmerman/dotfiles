@@ -6,4 +6,4 @@ export VISUAL="nvim"
 
 export CLICOLOR=1
 
-setxkbmap -option caps:escape
+# setxkbmap -option caps:escape

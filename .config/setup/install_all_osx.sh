@@ -19,11 +19,6 @@ brew install btop
 brew install cmake
 brew install nvm
 brew install fsouza/prettierd/prettierd
-brew install ripgrep
-brew install gcc
-brew install fd
-brew install luarocks
-brew install awscli
 
 nvm install 20
 
@@ -39,8 +34,9 @@ brew install zsh-fast-syntax-highlighting
 # brew install --cask google-chrome
 # brew install --cask firefox@developer-edition
 # brew install --cask signal
-#
-brew install --cask font-jetbrains-mono-nerd-font
+
+
+# brew install --cask font-jetbrains-mono-nerd-font
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
