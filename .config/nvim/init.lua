@@ -67,6 +67,12 @@ require("lazy").setup({
 	"tpope/vim-rhubarb",
 	"tpope/vim-dotenv",
 	{
+		"folke/ts-comments.nvim",
+		opts = {},
+		event = "VeryLazy",
+		enabled = vim.fn.has("nvim-0.10.0") == 1,
+	},
+	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		dependencies = {
@@ -734,6 +740,14 @@ hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 end)
 
 require("ibl").setup({ indent = { highlight = highlight } })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	callback = function(opts)
+		if vim.bo[opts.buf].filetype == "python" then
+			vim.cmd("Black")
+		end
+	end,
+})
 
 vim.cmd("colorscheme onedark_dark")
 vim.cmd("colorscheme nordfox")
