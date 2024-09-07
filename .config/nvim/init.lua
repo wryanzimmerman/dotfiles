@@ -22,11 +22,14 @@ vim.opt.laststatus = 3
 vim.opt.signcolumn = "yes"
 
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 vim.g.python3_host_prog = "~/.config/nvim/neovim_env/bin/python"
 
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+-- vim.opt.colorcolumn = '81'
 
 -- window navigation with leader key
 vim.api.nvim_set_keymap("n", "<leader>h", ":wincmd h<cr>", { noremap = true })
@@ -62,6 +65,7 @@ require("lazy").setup({
 	"tpope/vim-sleuth",
 	-- 'tpope/vim-fugitive',
 	"tpope/vim-rhubarb",
+	"tpope/vim-dotenv",
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -248,6 +252,7 @@ require("lazy").setup({
 				typescript = { { "prettierd", "prettier" } },
 				markdown = { { "prettierd", "prettier" } },
 				xml = { { "prettierd", "prettier" } },
+				go = { { "gofmt" } },
 			},
 			format_on_save = { timeout_ms = 500, lsp_fallback = true },
 			formatters = {
@@ -272,6 +277,10 @@ require("lazy").setup({
 	},
 
 	{ import = "plugins.nightfox" },
+	{
+		"olimorris/onedarkpro.nvim",
+		priority = 1000, -- Ensure it loads first
+	},
 	{ import = "plugins.feline" },
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -359,6 +368,7 @@ require("lazy").setup({
 					{ name = "nvim_lsp" },
 					-- { name = 'luasnip' },
 					{ name = "path" },
+					{ name = "vim-dadbod-completion" },
 				},
 			})
 		end,
@@ -512,6 +522,24 @@ require("lazy").setup({
 						},
 					},
 				},
+				golangci_lint_ls = {
+					default_config = {
+						cmd = { "golangci-lint-langserver" },
+						root_dir = require("lspconfig").util.root_pattern(".git", "go.mod"),
+						init_options = {
+							command = {
+								"golangci-lint",
+								"run",
+								"--enable-all",
+								"--disable",
+								"lll",
+								"--out-format",
+								"json",
+								"--issues-exit-code=1",
+							},
+						},
+					},
+				},
 			}
 
 			-- Ensure the servers and tools above are installed
@@ -533,6 +561,9 @@ require("lazy").setup({
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
+						if server_name == "tsserver" then
+							server_name = "ts_ls"
+						end
 						local server = servers[server_name] or {}
 						-- This handles overriding only values explicitly passed
 						-- by the server configuration above. Useful when disabling
@@ -544,6 +575,26 @@ require("lazy").setup({
 			})
 		end,
 	},
+
+	-- {
+	-- 	"mfussenegger/nvim-lint",
+	-- 	event = { "BufReadPre", "BufNewFile" },
+	-- 	config = function()
+	-- 		local lint = require("lint")
+	-- 		lint.linters_by_ft = {
+	-- 			markdown = { "markdownlint" },
+	-- 			go = { "revive" },
+	-- 		}
+	--
+	-- 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+	-- 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+	-- 			group = lint_augroup,
+	-- 			callback = function()
+	-- 				lint.try_lint()
+	-- 			end,
+	-- 		})
+	-- 	end,
+	-- },
 
 	{
 		"cameron-wags/rainbow_csv.nvim",
@@ -581,6 +632,108 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"nvim-neorg/neorg",
+		lazy = false,
+		version = "*",
+		config = function()
+			require("neorg").setup({
+				load = {
+					["core.defaults"] = {},
+					["core.concealer"] = {},
+					["core.dirman"] = {
+						config = {
+							workspaces = {
+								notes = "~/notes",
+							},
+							default_workspace = "notes",
+						},
+					},
+				},
+			})
+
+			vim.wo.foldlevel = 99
+			vim.wo.conceallevel = 2
+		end,
+		keys = {
+			{ "<leader>nn", "<CMD>Neorg<CR>", mode = { "n" }, id = "<leader>nn" },
+		},
+	},
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
+		},
+		cmd = {
+			"DBUI",
+			"DBUIToggle",
+			"DBUIAddConnection",
+			"DBUIFindBuffer",
+		},
+		init = function()
+			-- Your DBUI configuration
+			vim.g.db_ui_use_nerd_fonts = 1
+			vim.g.db_ui_env_variable_url = "DATABASE_URL"
+			vim.g.db_ui_win_position = "left"
+			vim.g.db_ui_disable_progress_bar = 0
+			-- map leader db to open dbui
+			vim.api.nvim_set_keymap("n", "<leader>db", "<CMD>DBUI<CR>", { noremap = true, silent = true })
+		end,
+	},
+	{
+		"zbirenbaum/copilot.lua",
+		enabled = true,
+		cmd = "Copilot",
+		event = "InsertEnter",
+		opts = {
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				keymap = {
+					accept = "<S-Tab>",
+				},
+			},
+			panel = { enabled = true },
+			keys = {
+				-- { "<leader>co", 'lua require("copilot.suggestion").toggle_auto_trigger()', mode = { "n", }, id = '<leader>co' },
+				-- { "<leader>co", '<CMD> Copilot panel', mode = { "n", }, id = '<leader>co' },
+				-- next = "<C-m>",
+			},
+		},
+	},
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		---@module "ibl"
+		---@type ibl.config
+	},
 })
 
+local highlight = {
+	"NordDarkBlue",
+	-- "RainbowYellow",
+	-- "RainbowBlue",
+	-- "RainbowOrange",
+	-- "RainbowGreen",
+	-- "RainbowViolet",
+	-- "RainbowCyan",
+}
+
+local hooks = require("ibl.hooks")
+-- create the highlight groups in the highlight setup hook, so they are reset
+-- every time the colorscheme changes
+hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+	vim.api.nvim_set_hl(0, "NordDarkBlue", { fg = "#1a1e25" })
+	-- vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+	-- vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+	-- vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+	-- vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+	-- vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+	-- vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+end)
+
+require("ibl").setup({ indent = { highlight = highlight } })
+
+vim.cmd("colorscheme onedark_dark")
 vim.cmd("colorscheme nordfox")
