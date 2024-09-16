@@ -40,6 +40,8 @@ vim.opt.inccommand = "split"
 vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
+vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
+
 -- Disable auto-comment on new line after comment
 vim.api.nvim_create_autocmd("BufEnter", {
 	callback = function()
@@ -272,6 +274,22 @@ require("lazy").setup({
 	},
 
 	{ import = "plugins.nightfox" },
+	{
+		"ellisonleao/gruvbox.nvim",
+		priority = 1000,
+		config = true,
+		opts = {
+			palette_overrides = {
+				-- bright_green = "#BB8D25",
+				-- bright_green = "#34A157",
+				-- bright_green = "#6AA16A",
+				bright_green = "#A3BE8C",
+				bright_orange = "#E37B25",
+			},
+			transparent_mode = true,
+		},
+	},
+	{ "HiPhish/rainbow-delimiters.nvim" },
 	{ import = "plugins.feline" },
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -581,6 +599,84 @@ require("lazy").setup({
 			},
 		},
 	},
+
+	-- { "github/copilot.vim" },
+
+	{
+		"zbirenbaum/copilot.lua",
+		enabled = true,
+		cmd = "Copilot",
+		event = "InsertEnter",
+		opts = {
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				keymap = {
+					accept = "<S-Tab>",
+				},
+			},
+			panel = { enabled = true },
+			keys = {
+				-- { "<leader>co", 'lua require("copilot.suggestion").toggle_auto_trigger()', mode = { "n", }, id = '<leader>co' },
+				-- { "<leader>co", '<CMD> Copilot panel', mode = { "n", }, id = '<leader>co' },
+				-- next = "<C-m>",
+			},
+		},
+	},
+
+	-- {
+	-- 	"huggingface/llm.nvim",
+	-- 	opts = {
+	-- 		api_token = nil, -- cf Install paragraph
+	-- 		model = "starcoder2:3b",
+	-- 		-- model = "codestral:22b-v0.1-f16",
+	-- 		-- model = "stable-code:latest",          -- the model ID, behavior depends on backend
+	-- 		-- model = "stable-code",                 -- the model ID, behavior depends on backend
+	-- 		backend = "ollama", -- backend ID, "huggingface" | "ollama" | "openai" | "tgi"
+	-- 		url = "http://localhost:11434/api/generate",
+	-- 		tokens_to_clear = {
+	-- 			"<|endoftext|>",
+	-- 			-- "<fim_middle>",
+	-- 			-- "</fim_middle>",
+	-- 			-- "<fim_suffix>",
+	-- 			-- "<fim_prefix>"
+	-- 		}, -- tokens to remove from the model's output
+	-- 		-- parameters that are added to the request body, values are arbitrary, you can set any field:value pair here it will be passed as is to the backend
+	-- 		request_body = {
+	-- 			parameters = {
+	-- 				max_new_tokens = 30,
+	-- 				-- temperature = 0.2,
+	-- 				-- top_p = 0.95,
+	-- 			},
+	-- 		},
+	-- 		-- set this if the model supports fill in the middle
+	-- 		fim = {
+	-- 			enabled = true,
+	-- 			prefix = "<fim_prefix>",
+	-- 			middle = "<fim_middle>",
+	-- 			suffix = "<fim_suffix>",
+	-- 		},
+	-- 		debounce_ms = 150,
+	-- 		accept_keymap = "<S-Tab>",
+	-- 		dismiss_keymap = "<C-Tab>",
+	-- 		tls_skip_verify_insecure = true,
+	-- 		-- -- llm-ls configuration, cf llm-ls section
+	-- 		-- lsp = {
+	-- 		--   bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/mason/bin/llm-ls",
+	-- 		-- },
+	-- 		-- tokenizer = nil,                   -- cf Tokenizer paragraph
+	-- 		-- context_window = 8192, -- max number of tokens for the context window
+	-- 		-- context_window = 4096,
+	-- 		-- context_window = 2048,
+	-- 		context_window = 1024,
+	-- 		enable_suggestions_on_startup = true,
+	-- 		-- enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
+	-- 		tokenizer = {
+	-- 			repository = "bigcode/starcoder",
+	-- 		},
+	-- 	},
+	-- },
 })
 
-vim.cmd("colorscheme nordfox")
+-- vim.cmd("colorscheme nordfox")
+vim.cmd("colorscheme gruvbox")
