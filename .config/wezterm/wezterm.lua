@@ -4,8 +4,9 @@ local config = {}
 
 config.audible_bell = "Disabled"
 
--- config.window_background_opacity = 0.80
+-- config.window_background_opacity = 0.8
 -- config.window_background_opacity = 0.65
+-- config.macos_window_background_blur = 20
 
 --
 -- Color scheme
@@ -80,8 +81,9 @@ nord_superlight.ansi = {
 	-- "#f2e9e1",
 	"#f2e9e1",
 }
--- nord_superlight.background = "#f6f2ee"
-nord_superlight.background = "#f5eadf"
+nord_superlight.background = "#f6f2ee"
+-- nord_superlight.background = "#f5eadf"
+-- nord_superlight.background = "#ffffff"
 nord_superlight.foreground = "#2e1903"
 nord_superlight.brights = {
 	-- "#534c45",
