@@ -818,30 +818,16 @@ require("lazy").setup({
 		config = true,
 	},
 
-	-- { "windwp/nvim-ts-autotag", event = "InsertEnter", config = true },
+	{ -- Project-wide TypeScript type-checking into the quickfix list
+		"dmmulroy/tsc.nvim",
+		cmd = "TSC",
+		opts = {},
+		keys = {
+			{ "<leader>ts", "<CMD>TSC<CR>", desc = "TS project type-check" },
+		},
+	},
 
-	-- {
-	-- 	"dmmulroy/tsc.nvim",
-	-- 	config = function()
-	-- 		require("tsc").setup({
-	-- 			flags = "--project tsconfig.app.json",
-	-- 			auto_start_watch_mode = true,
-	--
-	-- 			vim.keymap.set("n", "<leader>ts", "<CMD>TSC<CR>", { desc = "Run TSC" }),
-	-- 			keys = {
-	-- 				{ "<leader>ts", "<CMD>TSC<CR>", mode = { "n" }, id = "<leader>ts" },
-	-- 			},
-	-- 		})
-	-- 	end,
-	--
-	-- 	-- opts = {
-	-- 	-- 	auto_start_watch_mode = false,
-	-- 	-- 	flags = "--project tsconfig.app.json",
-	-- 	-- 	keys = {
-	-- 	-- 		{ "<leader>ts", "<CMD>TSC<CR>", mode = { "n" }, id = "<leader>ts" },
-	-- 	-- 	},
-	-- 	-- },
-	-- },
+	-- { "windwp/nvim-ts-autotag", event = "InsertEnter", config = true },
 
 	{
 		"kristijanhusak/vim-dadbod-ui",
