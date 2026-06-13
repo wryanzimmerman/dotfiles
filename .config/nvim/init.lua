@@ -48,11 +48,11 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
 
 -- Disable auto-comment on new line after comment
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("disable-auto-comment", { clear = true }),
 	callback = function()
-		vim.opt.formatoptions:remove({ "c", "r", "o" })
+		vim.opt_local.formatoptions:remove({ "c", "r", "o" })
 	end,
-	group = general,
 	desc = "Disable New Line Comment",
 })
 
@@ -276,7 +276,6 @@ require("lazy").setup({
 			vim.g.floaterm_height = 0.9
 			vim.g.floaterm_autoclose = 1
 		end,
-		opts = {},
 		keys = {
 			{ "<leader>tg", "<CMD>FloatermNew lazygit<CR>", mode = { "n" }, id = "<leader>tg" },
 		},
