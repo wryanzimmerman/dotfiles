@@ -1,5 +1,15 @@
 # Dotfiles Repository
 
+Bare git repo, `$HOME` work tree.
+
+## New machine
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/wryanzimmerman/dotfiles/main/.config/setup/init-config.sh | bash
+```
+
+Then set this machine's git identity in `~/.gitconfig.local`.
+
 ## 2024 Rewrite & Refactor Goals:
 
 > "Simplify, then add lightness" _--Colin Chapman, Lotus Cars_
