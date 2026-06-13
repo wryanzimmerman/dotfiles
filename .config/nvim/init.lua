@@ -57,7 +57,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end ---@diagnostic disable-next-line: undefined-field
@@ -264,7 +264,7 @@ require("lazy").setup({
 				xml = { "prettierd", "prettier", stop_after_first = true },
 				go = { "gofmt" },
 			},
-			format_on_save = { timeout_ms = 500, lsp_fallback = true },
+			format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
 			formatters = {
 				prettierd = {
 					prepend_args = { "--prose-wrap=always" },
@@ -623,8 +623,12 @@ require("lazy").setup({
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
 					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-					map("]g", vim.diagnostic.goto_next, "[g]o to next diagnostic")
-					map("[g", vim.diagnostic.goto_prev, "[g]o to previous diagnostic")
+					map("]g", function()
+						vim.diagnostic.jump({ count = 1, float = true })
+					end, "[g]o to next diagnostic")
+					map("[g", function()
+						vim.diagnostic.jump({ count = -1, float = true })
+					end, "[g]o to previous diagnostic")
 
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 
