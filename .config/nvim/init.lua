@@ -703,41 +703,6 @@ require("lazy").setup({
 				ts_ls = {
 					settings = {},
 				},
-				-- denols = {
-				-- 	settings = {},
-				-- },
-				-- ts_ls = {
-				-- 	-- capabilities = capabilities,
-				-- 	-- on_attach = on_attach,
-				-- 	root_dir = require("lspconfig").util.root_pattern({ "package.json", "tsconfig.json" }),
-				-- 	single_file_support = false,
-				-- 	handlers = {
-				-- 		["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
-				-- 			if result.diagnostics == nil then
-				-- 				return
-				-- 			end
-				--
-				-- 			-- ignore some tsserver diagnostics
-				-- 			local idx = 1
-				-- 			while idx <= #result.diagnostics do
-				-- 				local entry = result.diagnostics[idx]
-				--
-				-- 				local formatter = require("format-ts-errors")[entry.code]
-				-- 				entry.message = formatter and formatter(entry.message) or entry.message
-				--
-				-- 				-- codes: https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json
-				-- 				if entry.code == 80001 then
-				-- 					-- { message = "File is a CommonJS module; it may be converted to an ES module.", }
-				-- 					table.remove(result.diagnostics, idx)
-				-- 				else
-				-- 					idx = idx + 1
-				-- 				end
-				-- 			end
-				--
-				-- 			vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
-				-- 		end,
-				-- 	},
-				-- },
 				pyright = {
 					capabilities = capabilities,
 					-- on_attach = on_attach,
@@ -809,21 +774,11 @@ require("lazy").setup({
 			-- 	"stylua", -- Used to format Lua code
 			-- })
 
-			-- Setup other servers through mason-lspconfig
-			local other_servers = vim.tbl_filter(function(name)
-				return name ~= "ts_ls" and name ~= "denols"
-			end, vim.tbl_keys(servers))
-
 			require("mason-lspconfig").setup({
 				ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
 				automatic_installation = false,
 				handlers = {
 					function(server_name)
-						-- Skip ts_ls and denols as they're handled by custom handlers
-						if server_name == "ts_ls" or server_name == "denols" then
-							return
-						end
-
 						local server = servers[server_name] or {}
 						-- This handles overriding only values explicitly passed
 						-- by the server configuration above. Useful when disabling
@@ -832,141 +787,8 @@ require("lazy").setup({
 
 						require("lspconfig")[server_name].setup(server)
 					end,
-					-- Custom handlers that conditionally setup servers
-					ts_ls = function()
-						-- Set up an autocommand to handle ts_ls when TypeScript files are opened
-						vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-							pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
-							callback = function()
-								local bufnr = vim.api.nvim_get_current_buf()
-								local filepath = vim.api.nvim_buf_get_name(bufnr)
-								if filepath == "" then
-									return
-								end
-
-								local root = util.root_pattern("package.json", "tsconfig.json")(filepath)
-								if not root then
-									return
-								end
-
-								-- Don't start if deno files are present
-								if
-									vim.fn.filereadable(root .. "/deno.json") == 1
-									or vim.fn.filereadable(root .. "/deno.jsonc") == 1
-								then
-									return
-								end
-
-								-- Start ts_ls if not already running for this root
-								local clients = vim.lsp.get_clients({ name = "ts_ls" })
-								for _, client in ipairs(clients) do
-									if client.config.root_dir == root then
-										return -- Already running
-									end
-								end
-
-								vim.lsp.start({
-									name = "ts_ls",
-									cmd = { "typescript-language-server", "--stdio" },
-									capabilities = capabilities,
-									root_dir = root,
-									settings = servers.ts_ls.settings or {},
-								}, { bufnr = bufnr })
-							end,
-						})
-					end,
-					denols = function()
-						-- Set up an autocommand to handle denols when TypeScript files are opened
-						vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-							pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
-							callback = function()
-								local bufnr = vim.api.nvim_get_current_buf()
-								local filepath = vim.api.nvim_buf_get_name(bufnr)
-								if filepath == "" then
-									return
-								end
-
-								local root = util.root_pattern("deno.json", "deno.jsonc")(filepath)
-								if not root then
-									return
-								end
-
-								-- Start denols if not already running for this root
-								local clients = vim.lsp.get_clients({ name = "denols" })
-								for _, client in ipairs(clients) do
-									if client.config.root_dir == root then
-										return -- Already running
-									end
-								end
-
-								vim.lsp.start({
-									name = "denols",
-									cmd = { "deno", "lsp" },
-									capabilities = capabilities,
-									root_dir = root,
-									settings = servers.denols.settings or {},
-									init_options = {
-										enable = true,
-										lint = true,
-										unstable = true,
-									},
-								}, { bufnr = bufnr })
-							end,
-						})
-					end,
 				},
 			})
-
-			-- Aggressive autocommand to stop conflicting servers immediately
-			vim.api.nvim_create_autocmd("LspAttach", {
-				callback = function(args)
-					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					if not client then
-						return
-					end
-
-					local root_dir = client.config.root_dir
-					if not root_dir then
-						return
-					end
-
-					local has_deno = vim.fn.filereadable(root_dir .. "/deno.json") == 1
-						or vim.fn.filereadable(root_dir .. "/deno.jsonc") == 1
-					local has_node = vim.fn.filereadable(root_dir .. "/package.json") == 1
-						or vim.fn.filereadable(root_dir .. "/tsconfig.json") == 1
-
-					-- In Deno projects, stop ts_ls
-					if client.name == "ts_ls" and has_deno then
-						vim.schedule(function()
-							vim.lsp.stop_client(client.id, true)
-						end)
-					end
-
-					-- In Node.js projects, stop denols
-					if client.name == "denols" and has_node and not has_deno then
-						vim.schedule(function()
-							vim.lsp.stop_client(client.id, true)
-						end)
-					end
-				end,
-			})
-
-			-- require("mason-lspconfig").setup({
-			-- 	ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-			-- 	automatic_installation = false,
-			-- 	handlers = {
-			-- 		function(server_name)
-			-- 			local config = servers[server_name] or {}
-			-- 			vim.lsp.config(server_name, config)
-			-- 			vim.lsp.enable(server_name)
-			-- 			-- This handles overriding only values explicitly passed
-			-- 			-- by the server configuration above. Useful when disabling
-			-- 			-- certain features of an LSP (for example, turning off formatting for ts_ls)
-			-- 			-- server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-			-- 			-- require("lspconfig")[server_name].setup(server)
-			-- 		end,
-			-- 	},
-			-- })
 		end,
 	},
 
@@ -1019,45 +841,6 @@ require("lazy").setup({
 	-- 	-- 		{ "<leader>ts", "<CMD>TSC<CR>", mode = { "n" }, id = "<leader>ts" },
 	-- 	-- 	},
 	-- 	-- },
-	-- },
-
-	{
-		"github/copilot.vim",
-		init = function()
-			-- Disable copilot for now
-			-- vim.g.copilot_enabled = false
-			vim.g.copilot_no_tab_map = true -- disable tab mapping
-			vim.g.copilot_assume_mapped = true -- assume that tab is already mapped
-			vim.api.nvim_set_keymap(
-				"i",
-				"<S-Tab>",
-				'copilot#Accept("<CR>")',
-				{ expr = true, silent = true, noremap = true }
-			)
-			-- vim.g.copilot_filetypes = { ["*"] = false } -- disable copilot for all filetypes
-		end,
-	},
-
-	-- {
-	-- 	"zbirenbaum/copilot.lua",
-	-- 	enabled = true,
-	-- 	cmd = "Copilot",
-	-- 	event = "InsertEnter",
-	-- 	opts = {
-	-- 		suggestion = {
-	-- 			enabled = true,
-	-- 			auto_trigger = true,
-	-- 			keymap = {
-	-- 				accept = "<S-Tab>",
-	-- 			},
-	-- 		},
-	-- 		panel = { enabled = true },
-	-- 		keys = {
-	-- 			-- { "<leader>co", 'lua require("copilot.suggestion").toggle_auto_trigger()', mode = { "n", }, id = '<leader>co' },
-	-- 			-- { "<leader>co", '<CMD> Copilot panel', mode = { "n", }, id = '<leader>co' },
-	-- 			-- next = "<C-m>",
-	-- 		},
-	-- 	},
 	-- },
 
 	{
