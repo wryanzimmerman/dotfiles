@@ -7,3 +7,7 @@
 
 # Ignore dotfiles git repo
 .dotfiles
+
+.gitconfig.local
+.gitconfig.bak
+.gitconfig-*
