@@ -249,9 +249,6 @@ require("lazy").setup({
 		event = { "BufWritePre" },
 		cmd = { "ConformInfo" },
 		opts = {
-			format = {
-				timeout_ms = 5000, -- setting long timeout because of black
-			},
 			-- Define your formatters
 			formatters_by_ft = {
 				lua = { "stylua" },
