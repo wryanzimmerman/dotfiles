@@ -24,6 +24,7 @@ vim.opt.laststatus = 3
 vim.opt.signcolumn = "yes"
 
 vim.g.mapleader = " "
+vim.g.have_nerd_font = true
 
 vim.g.python3_host_prog = "~/.config/nvim/neovim_env/bin/python"
 
@@ -653,7 +654,7 @@ require("lazy").setup({
 					-- if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
 					if
 						client
-						and client:supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
+						and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
 					then
 						map("<leader>th", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -744,13 +745,9 @@ require("lazy").setup({
 					-- In pharos-api it was hitting the files in the root of the lambda and
 					-- setting root_dir there instead of the project-wide root_dir.
 					root_dir = function(fname)
-						local root_files = {
-							"pyproject.toml",
-						}
-
-						return util.root_pattern(unpack(root_files))(fname)
-							or util.find_git_ancestor(fname)
-							or util.path.dirname(fname)
+						return util.root_pattern("pyproject.toml")(fname)
+							or vim.fs.root(fname, ".git")
+							or vim.fs.dirname(fname)
 					end,
 					settings = {
 						python = {
@@ -776,26 +773,18 @@ require("lazy").setup({
 					},
 				},
 				golangci_lint_ls = {
-					default_config = {
-						cmd = { "golangci-lint-langserver" },
-						root_dir = require("lspconfig").util.root_pattern(".git", "go.mod"),
-						init_options = {
-							command = {
-								"golangci-lint",
-								"run",
-								"--disable",
-								"lll",
-								"--out-format",
-								"json",
-								"--issues-exit-code=1",
-							},
+					cmd = { "golangci-lint-langserver" },
+					root_dir = util.root_pattern(".git", "go.mod"),
+					init_options = {
+						command = {
+							"golangci-lint",
+							"run",
+							"--disable",
+							"lll",
+							"--out-format",
+							"json",
+							"--issues-exit-code=1",
 						},
-					},
-				},
-				terraformls = {
-					default_config = {
-						cmd = { "terraform-ls", "serve" },
-						filetypes = { "hcl", "tf", "tfvars", "terraform", "terraform-vars", "pkr.hcl", "pkr" },
 					},
 				},
 			}
