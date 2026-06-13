@@ -41,11 +41,13 @@ if [ ! -f "$HOME/.gitconfig.local" ]; then
 LOCAL
 fi
 
+echo "==> Installing packages"
+bash "$HOME/.config/setup/install_all_osx.sh"
+
 cat <<'NEXT'
 
 ==> Done. Next steps:
   1. Edit ~/.gitconfig.local with this machine's git identity
-  2. brew bundle --file ~/.config/setup/Brewfile   (install packages)
-  3. iTerm2: point "Load preferences from a custom folder" at ~/.config/iterm2/settings
-  4. To push with a non-default GitHub account: gh auth switch -u <account>
+  2. Install a terminal (wezterm/iterm2/ghostty) — configs are tracked under ~/.config
+  3. To push with a non-default GitHub account: gh auth switch -u <account>
 NEXT

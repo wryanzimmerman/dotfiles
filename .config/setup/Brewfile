@@ -1,0 +1,29 @@
+# CLI
+brew "neovim"
+brew "tmux"
+brew "mosh"
+brew "fzf"
+brew "ripgrep"
+brew "fd"
+brew "lazygit"
+brew "gh"
+brew "btop"
+brew "cmake"
+brew "gcc"
+brew "luarocks"
+brew "nvm"
+brew "awscli"
+brew "prettierd"
+
+# zsh (sourced by ~/.zshrc)
+brew "zsh-vi-mode"
+brew "zsh-autosuggestions"
+brew "powerlevel10k"
+brew "zsh-fast-syntax-highlighting"
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
+
+# Apps
+cask "1password"
+cask "1password-cli"
