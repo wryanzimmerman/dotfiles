@@ -600,28 +600,11 @@ require("lazy").setup({
 				},
 			})
 
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-			local util = require("lspconfig.util")
-
+			---@type table<string, vim.lsp.Config>
 			local servers = {
-				-- clangd = {},
-				-- gopls = {},
-				ts_ls = {
-					settings = {},
-				},
+				ts_ls = {},
+				rust_analyzer = {},
 				pyright = {
-					capabilities = capabilities,
-					-- on_attach = on_attach,
-					filetypes = { "python" },
-					-- Making pyright climb up to the pyproject.toml file to set the root_dir,
-					-- In pharos-api it was hitting the files in the root of the lambda and
-					-- setting root_dir there instead of the project-wide root_dir.
-					root_dir = function(fname)
-						return util.root_pattern("pyproject.toml")(fname)
-							or vim.fs.root(fname, ".git")
-							or vim.fs.dirname(fname)
-					end,
 					settings = {
 						python = {
 							analysis = {
@@ -629,25 +612,25 @@ require("lazy").setup({
 							},
 						},
 					},
+					-- Root at the project (pyproject.toml, else .git) so pyright
+					-- doesn't anchor to a nested dir in monorepos.
+					root_dir = function(bufnr, on_dir)
+						local fname = vim.api.nvim_buf_get_name(bufnr)
+						on_dir(
+							vim.fs.root(fname, "pyproject.toml") or vim.fs.root(fname, ".git") or vim.fs.dirname(fname)
+						)
+					end,
 				},
-				rust_analyzer = {},
 				lua_ls = {
-					-- cmd = {...},
-					-- filetypes = { ...},
-					-- capabilities = {},
 					settings = {
 						Lua = {
 							completion = {
 								callSnippet = "Replace",
 							},
-							-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-							-- diagnostics = { disable = { 'missing-fields' } },
 						},
 					},
 				},
 				golangci_lint_ls = {
-					cmd = { "golangci-lint-langserver" },
-					root_dir = util.root_pattern(".git", "go.mod"),
 					init_options = {
 						command = {
 							"golangci-lint",
@@ -662,33 +645,19 @@ require("lazy").setup({
 				},
 			}
 
-			-- Ensure the servers and tools above are installed
-			--  To check the current status of installed tools and/or manually install
-			--  other tools, you can run
-			--    :Mason
-			--
-			--  You can press `g?` for help in this menu.
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-			require("mason-lspconfig").setup({
-				ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-				automatic_installation = false,
-				handlers = {
-					function(server_name)
-						local server = servers[server_name] or {}
-						-- This handles overriding only values explicitly passed
-						-- by the server configuration above. Useful when disabling
-						-- certain features of an LSP (for example, turning off formatting for ts_ls)
-						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-
-						require("lspconfig")[server_name].setup(server)
-					end,
-				},
-			})
+			-- Native LSP (Neovim 0.11+): blink.cmp capabilities for all servers,
+			-- then register + enable each.
+			vim.lsp.config("*", { capabilities = require("blink.cmp").get_lsp_capabilities() })
+			for name, server in pairs(servers) do
+				vim.lsp.config(name, server)
+				vim.lsp.enable(name)
+			end
 		end,
 	},
 
