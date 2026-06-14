@@ -17,5 +17,6 @@ mkdir -p "$NVM_DIR"
 . "$(brew --prefix nvm)/nvm.sh"
 nvm install 20
 
-# tmux plugin manager
+# tmux plugin manager + plugins (tmux-sensible, nordtheme/tmux)
 [ -d "$HOME/.tmux/plugins/tpm" ] || git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+"$HOME/.tmux/plugins/tpm/bin/install_plugins"
