@@ -76,94 +76,128 @@ require("lazy").setup({
 		enabled = vim.fn.has("nvim-0.10.0") == 1,
 	},
 	{
+		-- `main` branch is the rewrite required for Neovim 0.12+; the old
+		-- `master` branch is frozen and unsupported there. See `:help nvim-treesitter`.
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
 		build = ":TSUpdate",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-		},
-		opts = {
-			ensure_installed = {
+		config = function()
+			-- Parsers we always want available. `markdown_inline` is required
+			-- alongside `markdown`; `query`/`vimdoc` power :InspectTree and help.
+			require("nvim-treesitter").install({
 				"bash",
 				"c",
+				"css",
 				"diff",
 				"html",
+				"javascript",
 				"lua",
 				"luadoc",
 				"markdown",
-				"vimdoc",
-				"typescript",
-				"javascript",
-				"css",
+				"markdown_inline",
+				"query",
 				"sql",
 				"styled",
-			},
-			ignore_install = { "csv" },
-			auto_install = true,
-			highlight = {
-				enable = true,
-			},
-			indent = { enable = true },
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "<c-space>",
-					node_incremental = "<c-space>",
-					scope_incremental = "<c-s>",
-					node_decremental = "<M-space>",
-				},
-			},
-			textobjects = {
-				select = {
-					enable = true,
-					lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-					keymaps = {
-						-- You can use the capture groups defined in textobjects.scm
-						["aa"] = "@parameter.outer",
-						["ia"] = "@parameter.inner",
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = "@class.inner",
-					},
-				},
-				move = {
-					enable = true,
-					set_jumps = true, -- whether to set jumps in the jumplist
-					goto_next_start = {
-						["]m"] = "@function.outer",
-						["]]"] = "@class.outer",
-					},
-					goto_next_end = {
-						["]M"] = "@function.outer",
-						["]["] = "@class.outer",
-					},
-					goto_previous_start = {
-						["[m"] = "@function.outer",
-						["[["] = "@class.outer",
-					},
-					goto_previous_end = {
-						["[M"] = "@function.outer",
-						["[]"] = "@class.outer",
-					},
-				},
-				swap = {
-					enable = true,
-					swap_next = {
-						["<leader>a"] = "@parameter.inner",
-					},
-					swap_previous = {
-						["<leader>A"] = "@parameter.inner",
-					},
-				},
-			},
-		},
-		config = function(_, opts)
-			-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+				"typescript",
+				"vim",
+				"vimdoc",
+			})
 
-			-- Prefer git instead of curl in order to improve connectivity in some environments
-			require("nvim-treesitter.install").prefer_git = true
-			---@diagnostic disable-next-line: missing-fields
-			require("nvim-treesitter.configs").setup(opts)
+			---@param buf integer
+			---@param language string
+			local function try_attach(buf, language)
+				if not vim.treesitter.language.add(language) then
+					return
+				end
+				-- Highlighting is provided by Neovim core on `main`.
+				vim.treesitter.start(buf, language)
+				-- Treesitter indentation is experimental; only enable it when the
+				-- parser ships an `indents` query, else fall back to Vim's builtin.
+				if vim.treesitter.query.get(language, "indents") ~= nil then
+					vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end
+
+			local available = require("nvim-treesitter").get_available()
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function(args)
+					local buf = args.buf
+					local language = vim.treesitter.language.get_lang(args.match)
+					if not language then
+						return
+					end
+					local installed = require("nvim-treesitter").get_installed("parsers")
+					if vim.tbl_contains(installed, language) then
+						try_attach(buf, language)
+					elseif vim.tbl_contains(available, language) then
+						-- `auto_install` equivalent: install on first use, then attach.
+						require("nvim-treesitter").install(language):await(function()
+							try_attach(buf, language)
+						end)
+					else
+						-- Parser exists on the system but isn't managed by us; try anyway.
+						try_attach(buf, language)
+					end
+				end,
+			})
+		end,
+	},
+
+	{
+		-- textobjects also moved to a `main` branch with an explicit-keymap API;
+		-- there is no built-in `incremental_selection` replacement on `main`.
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "main",
+		event = { "BufReadPost", "BufNewFile" },
+		config = function()
+			require("nvim-treesitter-textobjects").setup({
+				select = { lookahead = true },
+				move = { set_jumps = true },
+			})
+
+			local select = require("nvim-treesitter-textobjects.select")
+			local swap = require("nvim-treesitter-textobjects.swap")
+			local move = require("nvim-treesitter-textobjects.move")
+
+			-- Select
+			for key, query in pairs({
+				["aa"] = "@parameter.outer",
+				["ia"] = "@parameter.inner",
+				["af"] = "@function.outer",
+				["if"] = "@function.inner",
+				["ac"] = "@class.outer",
+				["ic"] = "@class.inner",
+			}) do
+				vim.keymap.set({ "x", "o" }, key, function()
+					select.select_textobject(query, "textobjects")
+				end, { desc = "TS select " .. query })
+			end
+
+			-- Swap parameters
+			vim.keymap.set("n", "<leader>a", function()
+				swap.swap_next("@parameter.inner")
+			end, { desc = "Swap next parameter" })
+			vim.keymap.set("n", "<leader>A", function()
+				swap.swap_previous("@parameter.inner")
+			end, { desc = "Swap previous parameter" })
+
+			-- Movement
+			for key, spec in pairs({
+				["]m"] = { move.goto_next_start, "@function.outer", "Next function start" },
+				["]]"] = { move.goto_next_start, "@class.outer", "Next class start" },
+				["]M"] = { move.goto_next_end, "@function.outer", "Next function end" },
+				["]["] = { move.goto_next_end, "@class.outer", "Next class end" },
+				["[m"] = { move.goto_previous_start, "@function.outer", "Prev function start" },
+				["[["] = { move.goto_previous_start, "@class.outer", "Prev class start" },
+				["[M"] = { move.goto_previous_end, "@function.outer", "Prev function end" },
+				["[]"] = { move.goto_previous_end, "@class.outer", "Prev class end" },
+			}) do
+				local fn, query, desc = spec[1], spec[2], spec[3]
+				vim.keymap.set({ "n", "x", "o" }, key, function()
+					fn(query, "textobjects")
+				end, { desc = desc })
+			end
 		end,
 	},
 
@@ -639,8 +673,8 @@ require("lazy").setup({
 							"run",
 							"--disable",
 							"lll",
-							"--out-format",
-							"json",
+							"--output.json.path",
+							"stdout",
 							"--issues-exit-code=1",
 						},
 					},

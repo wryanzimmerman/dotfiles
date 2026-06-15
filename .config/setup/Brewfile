@@ -11,6 +11,7 @@ brew "gh"
 brew "btop"
 brew "cmake"
 brew "gcc"
+brew "tree-sitter-cli" # nvim-treesitter `main` compiles parsers from source
 brew "luarocks"
 brew "nvm"
 brew "awscli"
