@@ -171,7 +171,7 @@ config.window_frame = {
 	inactive_titlebar_bg = "#1E222B",
 }
 
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE|MACOS_FORCE_DISABLE_SHADOW"
 -- config.window_decorations = "RESIZE"
 
 config.keys = {
@@ -231,7 +231,7 @@ config.keys = {
 
 config.front_end = "WebGpu"
 
-config.use_resize_increments = true
+-- config.use_resize_increments = true
 
 local function recompute_padding(window)
 	local window_dims = window:get_dimensions()
